@@ -29,7 +29,7 @@ class Localization:
                         sig[i, j] = np.median(np.abs(err)) / 0.6745
                         threshold[i, j] = np.sqrt(2 * np.log(n_r)) * sig[i, j]
 
-            elif random_shuffle == 'group':
+            elif random_shuffle == 'group':  # field properties, shuffle single time and define single threshold
                 m_shuffled = rng.choice(self.M, self.N, replace=False, axis=1)
                 cmd_rs = cov(m_shuffled, self.D)
                 sig = np.median(np.abs(cmd_rs), axis=0) / 0.6745
