@@ -16,5 +16,5 @@ zdim = 128
 
 gan = DcganR1Ada(img_shape=shape, latent_dim=zdim, d_lr=0.001, g_lr=0.001,
                  metric=None, metric_interval=5,
-                 d_reg=5, ada=None, folder='./tfcheckpoints/')  # assembly network
+                 d_reg=5, ada=None, folder='./tfcheckpoints/')  # assembly network with folder
 gan.train_gan(X_train, epochs=15000, plot_interval=5, method='random', noise=noise, batch_size=32, start=0)  # train gan
