@@ -67,46 +67,10 @@ class ResLoader(object):
         return rows
 
     @staticmethod
-    def load_3_facies(dimensions=2, conditional=False, preprocess=True):
-        if dimensions == 2:
-            if preprocess is True:
-                rows = np.load('cases/3facies/2d/dataset.npy')
-                rows = rows.astype('float')
-            else:
-                for i in range(4):
-                    with open('cases/3facies/2d/3facies_20k_{}.txt'.format(i + 1)) as f:
-                        values = np.loadtxt(f, skiprows=20002).T
-                    if i == 0:
-                        rows = values
-                    else:
-                        rows = np.concatenate((rows, values), axis=0)
-                rows = rows.reshape((80000, 48, 48, 1), order='C')
-                rows = rows - 1
-            return rows
-        elif dimensions == 3:
-            import csv
-            file = open('cases/3facies/facies_3d')
-            csvreader = csv.reader(file)
-            header = []
-            header = next(csvreader)
-            rows = []
-            for row in csvreader:
-                rows.append(row)
-
-            mtx = np.array(rows)
-            mtx[mtx == 'category_0'] = -1
-            mtx[mtx == 'category_1'] = 0
-            mtx[mtx == 'category_2'] = 1
-            mtx = mtx.astype('float')
-            ens = mtx.reshape((48, 48, 8, 3000), order='F')
-            if conditional:
-                X_train = np.zeros((3000 * 8, 48, 48, 1))
-                for n in range(3000):
-                    X_train[(n * 8):((n + 1) * (8)), :, :, 0] = np.einsum('xyn->nxy', ens[:, :, :, n])
-            else:
-                X_train = ens
-            return X_train
-        raise ValueError('parameter dimension must be equal 2 or 3')
+    def load_3_facies(folder):
+        rows = np.load('{}/dataset.npy'.format(folder))
+        rows = rows.astype('float')
+        return rows
 
     @staticmethod
     def load_unisim_ii(Ne, preprocess=True, conditional=False, null=False, parameter='kx', scale=None, crop=False):
