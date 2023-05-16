@@ -78,7 +78,7 @@ class GanNetworks(object):
         plt.ion()
         if noise is None:
             noise = np.random.normal(0, 1, (r * c, self.latent_dim))
-        gen_imgs = self.generator.predict(noise)
+        gen_imgs = self.ema_generator.predict(noise)
         if gen_imgs.shape[-1] == 3:
             gen_imgs = (gen_imgs * 127.5 + 127.5).astype('int')
             limits = (0, 255)
@@ -271,10 +271,7 @@ class DcganR1Ada(GanNetworks):
                 self.losses['Dfake'].append(d_loss_f)
                 self.losses['G'].append(gen_loss)
 
-
-                for weight, ema_weight in zip(
-                        self.generator.weights, self.ema_generator.weights
-                ):
+                for weight, ema_weight in zip(self.generator.weights, self.ema_generator.weights):
                     ema_weight.assign(0.99 * ema_weight + (1 - 0.99) * weight)
 
                 if epoch < 25000:
