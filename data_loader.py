@@ -115,51 +115,6 @@ class ResLoader(object):
         # En_kx = 2 * (En_kx - np.nanmin(En_kx)) / (np.nanmax(En_kx) - np.nanmin(En_kx)) - 1
         return En_kx
 
-    @staticmethod
-    def load_unisim_i(conditional=True, null=False, parameter='kx', crop=False):
-        """parameters order:
-            1: poro; 2: ntg; 3:kx, 4:ky; 5: kz"""
-        if parameter == 'poro':
-            idx = 0
-        elif parameter == 'ntg':
-            idx = 1
-        elif parameter == 'kx':
-            idx = 2
-        elif parameter == 'ky':
-            idx = 3
-        elif parameter == 'kz':
-            idx = 4
-
-        # raw = open("cases/UNISIM-I/null.inc", 'r')
-        # a = raw.read()
-        # c = createarray(a)
-        # d = c.reshape((81, 58, 20), order='F')
-        # # d = d[:, :, :]
-
-        import mat73
-        mat = mat73.loadmat('./cases/UNISIM-I/PETROenA1.mat')
-        full_field = np.vsplit(mat['PETRO_A'], 5)
-
-        En = np.reshape(full_field[idx], (81, 58, 20, 500), order='F')
-
-        En = np.delete(En, [3, 4, 13, 19], axis=2)  # exclude layers with too much nan
-
-        if conditional:
-            En = np.einsum('xyzn->nzxy', En)
-            En = np.reshape(En, (np.prod(En.shape[0:2]), 81, 58, 1))
-
-        if crop:
-            import tensorflow as tf
-            En_c1 = tf.image.crop_to_bounding_box(En, 29, 13, 33, 26)
-            En_c1 = tf.image.resize(En_c1, [48, 48]).numpy()
-            En_c2 = tf.image.crop_to_bounding_box(En, 20, 20, 25, 25)
-            En_c2 = tf.image.resize(En_c2, [48, 48]).numpy()
-
-            En = np.concatenate([En_c1, En_c2], axis=0)
-            np.random.shuffle(En)
-
-        En_kx = 2 * (En - np.nanmin(En)) / (np.nanmax(En) - np.nanmin(En)) - 1
-        return En_kx
 
     @staticmethod
     def load_gaussian(size):
@@ -191,16 +146,6 @@ class ResLoader(object):
             rows = np.load('./cases/channel3d/dataset.npy').astype('float')
         return rows
 
-    @staticmethod
-    def load_channel_old():
-        import tensorflow as tf
-        X_train_raw = np.loadtxt('./cases/channel2d/channel_10000.txt')
-        X_train_raw = np.reshape(X_train_raw, (51, 51, 1, 10000))
-        # X_train_raw = np.reshape(X_train_raw, (51, 51, 5000))
-        X_train_raw = np.einsum('xycn->nxyc', X_train_raw)
-        X_train = X_train_raw * 2 - 1
-        X_train = tf.image.resize(X_train, [48, 48]).numpy()
-        return X_train
 
     @staticmethod
     def load_classifier_data(N_classes, N_perclass, train_frac=0.9, shuffle=True):

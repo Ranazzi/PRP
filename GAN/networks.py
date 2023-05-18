@@ -60,8 +60,8 @@ class GanNetworks(object):
         elif model == 'G_ema':
             self.ema_generator.save_weights('{}/{}'.format(self.folder, model))
         elif model == 'best':
-            self.generator.save_weights('{}/{}_G'.format(self.folder, model))
-            self.discriminator.save_weights('{}/{}_D'.format(self.folder, model))
+            self.ema_generator.save_weights('{}/{}_G'.format(self.folder, model))
+            self.ema_discriminator.save_weights('{}/{}_D'.format(self.folder, model))
 
     def load_checkpoint(self, model):
         if model == 'D':
@@ -156,13 +156,13 @@ class GanNetworks(object):
             print("FID: %f" % act)
             self.metrics['FID'].append(act)
             if save:
-                np.save('{}/FID.npy'.format(save), self.metrics['FID'])
+                np.save('{}/FID.npy'.format(self.folder), self.metrics['FID'])
         if 'FRD' in self.metrics:
             act = GanMetrics.frechet_reservoir_distance(X_test, X_pred)
             print("FRD: %f" % act)
             self.metrics['FRD'].append(act)
             if save:
-                np.save('{}/FRD.npy'.format(save), self.metrics['FRD'])
+                np.save('{}/FRD.npy'.format(self.folder), self.metrics['FRD'])
 
         if 'D_out' in self.metrics:
             real, fake = GanMetrics.discriminator_outputs(self, X_test[0:1000])
@@ -186,7 +186,7 @@ class DcganR1Ada(GanNetworks):
                                                             img_shape=self.img_shape, batch_norm=0.9,
                                                             nfilters=32)  # gen object
         self.ema_generator = tf.keras.models.clone_model(self.generator)
-        self.discriminator = NetBlocks.build_baseline_discriminator(img_shape=self.img_shape, batch_norm=None,
+        self.discriminator = NetBlocks.build_baseline_discriminator(img_shape=self.img_shape, batch_norm=0.9,
                                                                     layer_norm=False,
                                                                     nfilters=32)  # build dis object
         self.ema_discriminator = tf.keras.models.clone_model(self.discriminator)
@@ -289,16 +289,16 @@ class DcganR1Ada(GanNetworks):
                 print(output)
                 if hasattr(self, 'metrics'):
                     if (epoch % self.metric_interval == 0) and (epoch != 0):
-                        self.compute_metrics(X_test=X_train[:10000])
+                        self.compute_metrics(X_test=X_train[:10000], save=True)
                         if self.metrics['FRD'][-1] < best:
                             if save:
                                 self.save_checkpoint('best')
                             best = self.metrics['FRD'][-1]
-                        if save:
-                            np.save('{}/prob_tracker.npy'.format(self.folder),
-                                    np.array(self.ada.probability_tracker))
-                            np.save('{}/acc_tracker.npy'.format(self.folder),
-                                    np.array(self.ada.accuracy_tracker))
+                        # if save:
+                        #     np.save('{}/prob_tracker.npy'.format(self.folder),
+                        #             np.array(self.ada.probability_tracker))
+                        #     np.save('{}/acc_tracker.npy'.format(self.folder),
+                        #             np.array(self.ada.accuracy_tracker))
                 if plot_interval is not None:
                     if epoch % plot_interval == 0:
                         if save:  # save checkpoint

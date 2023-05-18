@@ -1,8 +1,9 @@
 # PRP - Python reservoir package
 
-![example.png](figures/example.png)
+![example.png](figures/uiikx_interp.svg)
+![example.png](figures/uiiNG_interp.svg)
 
-PRAP - Python reservoir assimilation package was developed to evaluate different assimilation methods with different
+PRP - Python reservoir package was developed to evaluate data assimilation with different
 parameterization and localization methods.
 
 ## Avaiable methods
@@ -26,6 +27,9 @@ development)
 * WGAN-GP
 * DCGAN with R1 regularization (DCGAN-R1) ([Mescheder et al., 2018](https://doi.org/10.48550/arXiv.1801.04406);
 [Karras et al., 2020](https://doi.org/10.48550/arXiv.1912.04958))
+
+### Ensemble-based projector
+* EnProj (insert ref here)
 
 ### Datasets
 * Two-facies channelized (ref here)
