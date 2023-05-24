@@ -251,8 +251,17 @@ class DcganR1Ada(GanNetworks):
             for epoch in range(start, epochs):
                 if epoch == 0 and hasattr(self, 'ada'):
                     self.ada.accuracy_tracker.append(0.0)
-                idx = np.random.choice(X_train.shape[0], batch_size, replace=False)
-                train_batch = X_train[idx]
+                if X_train == 'anime':
+                    from matplotlib.image import imread
+                    idx = np.random.choice(36739, batch_size, replace=False)
+                    _d = list()
+                    for __ in range(idx.__len__()):
+                        _d.append(imread('./datasets/anime/images/{}.jpg'.format(idx[__])))
+                    train_batch = np.array(_d)
+                    train_batch = (train_batch - 127.5) / 127.5
+                else:
+                    idx = np.random.choice(X_train.shape[0], batch_size, replace=False)
+                    train_batch = X_train[idx]
                 gen_loss, dis_loss, d_loss_r, d_loss_f = train_step(train_batch, batch_size,
                                                                     reg=self.d_reg, ada=augment)  # train with batch
 

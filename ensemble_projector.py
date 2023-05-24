@@ -32,8 +32,8 @@ class EnsembleProjector(object):
     def project(self, sample, steps, m_error):
         def step(z, dout, dr, steps, Cd):
             dreal = np.repeat(dr, dout.shape[-1], axis=1)
-            # za = Esmda(z, dout, dreal, Cd).subspace(steps, 0.9)  # Nd > Ne
-            za = Esmda(z, dout, dreal, Cd).explicit(steps)  # Nd > Ne
+            za = Esmda(z, dout, dreal, Cd).subspace(steps, 0.99)  # Nd > Ne
+            # za = Esmda(z, dout, dreal, Cd).explicit(steps)  # Nd > Ne
             return za
 
         obj = []
