@@ -4,7 +4,7 @@
 ![example.png](figures/uiiNG_interp.svg)
 
 PRP - Python reservoir package was developed to evaluate data assimilation with different
-parameterization and localization methods.
+parameterization and localization methods. Note that this project is under development.
 
 ## Avaiable methods
 ### Assimilation
