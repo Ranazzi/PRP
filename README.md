@@ -28,6 +28,9 @@ development)
 * DCGAN with R1 regularization (DCGAN-R1) ([Mescheder et al., 2018](https://doi.org/10.48550/arXiv.1801.04406);
 [Karras et al., 2020](https://doi.org/10.48550/arXiv.1912.04958))
 
+### Data Augmementation
+* Adaptive Discriminator Augmentation (ADA) [Karras et al., 2020](https://doi.org/10.48550/arXiv.1912.04958)
+
 ### Ensemble-based projector
 * EnProj (insert ref here)
 
@@ -48,5 +51,11 @@ development)
 | [Networks](https://drive.google.com/open?id=1bZGLQIo7pX6wckAzn6iG4k5I7GCwfxD7) | Main Networks folder
 | &boxvr;&nbsp; [classifier](https://drive.google.com/open?id=1m9Rzbuc_3P9f5oYhIYUwCHv0AH6cEYLx) | Pre-trained Reservoir Classifier Network (reference paper here)
 | &boxur;&nbsp; [3facies](https://drive.google.com/open?id=1IXa6V4w9T9cNLTjzrEg6pzSbzmZ1SpeJ) | Pre-trained 3facies GAN (reference case of paper) 
+
+
+To run a simple test in GAN parameterization:
+* Download the desired dataset and load it X_train = ...
+* Load the GAN object with specified parameters:  gan = DcganR1Ada(...) the description of the function provides detailed information
+* Start the training process: gan.train_gan(X_train, ...)
 
 
