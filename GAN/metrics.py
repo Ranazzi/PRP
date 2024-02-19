@@ -24,6 +24,10 @@ class GanMetrics(object):
         FRD = Model(inputs=RS.input,
                     outputs=layers.GlobalAveragePooling2D()(RS.layers[-5].output))  # first dense
 
+        # RS = tf.keras.models.load_model('classifier_weights/Reservoir_classifier_v2.h5')
+        # FRD = Model(inputs=RS.input,
+        #                      outputs=layers.GlobalAveragePooling2D()(RS.layers[-5].output))  # only feature block
+
         # get activation values
         act1 = FRD.predict(x1, verbose=0)
         act2 = FRD.predict(x2, verbose=0)

@@ -11,8 +11,18 @@ class Gate_Random(keras.layers.Layer):
     def call(self, inputs, augmented, probability):
         batch_size = tf.shape(inputs)[0]
         cond = tf.random.uniform(shape=(batch_size, 1, 1, 1), minval=0.0, maxval=1.0)
+
+        inputs = tf.transpose(inputs, [0, 3, 1, 2])
+        augmented = tf.transpose(augmented, [0, 3, 1, 2])
+
         bools = tf.math.less(cond, probability)
-        return tf.where(bools, augmented, inputs)
+
+        out = tf.where(bools, augmented, inputs)
+
+        out = tf.transpose(out, [0, 2, 3, 1])
+
+        return out
+        # return tf.where(bools, augmented, inputs)
 
 
 class Flip(keras.layers.Layer):

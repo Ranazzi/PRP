@@ -186,7 +186,7 @@ class DcganR1Ada(GanNetworks):
                                                             img_shape=self.img_shape, batch_norm=0.9,
                                                             nfilters=32)  # gen object
         self.ema_generator = tf.keras.models.clone_model(self.generator)
-        self.discriminator = NetBlocks.build_baseline_discriminator(img_shape=self.img_shape, batch_norm=0.9,
+        self.discriminator = NetBlocks.build_baseline_discriminator(img_shape=self.img_shape, batch_norm=None,
                                                                     layer_norm=False,
                                                                     nfilters=32)  # build dis object
         self.ema_discriminator = tf.keras.models.clone_model(self.discriminator)
@@ -194,7 +194,7 @@ class DcganR1Ada(GanNetworks):
         self.dis_opt = tf.keras.optimizers.Adam(learning_rate=self.d_lr, beta_1=0.5, beta_2=0.9)  # dis optimizer
 
         if ada is not None:
-            self.ada = AdaptiveDiscriminatorAugmentation(img_shape=self.img_shape, method='fixed', target=ada)
+            self.ada = AdaptiveDiscriminatorAugmentation(img_shape=self.img_shape, method='accuracy', target=ada)
 
     def train_gan(self, X_train, epochs=5000, method='random', batch_size=32, plot_interval=None, noise=None,
                   start=0, save=False):
@@ -251,17 +251,17 @@ class DcganR1Ada(GanNetworks):
             for epoch in range(start, epochs):
                 if epoch == 0 and hasattr(self, 'ada'):
                     self.ada.accuracy_tracker.append(0.0)
-                if X_train == 'anime':
-                    from matplotlib.image import imread
-                    idx = np.random.choice(36739, batch_size, replace=False)
-                    _d = list()
-                    for __ in range(idx.__len__()):
-                        _d.append(imread('./datasets/anime/images/{}.jpg'.format(idx[__])))
-                    train_batch = np.array(_d)
-                    train_batch = (train_batch - 127.5) / 127.5
-                else:
-                    idx = np.random.choice(X_train.shape[0], batch_size, replace=False)
-                    train_batch = X_train[idx]
+                # if X_train == 'anime':
+                #     from matplotlib.image import imread
+                #     idx = np.random.choice(36739, batch_size, replace=False)
+                #     _d = list()
+                #     for __ in range(idx.__len__()):
+                #         _d.append(imread('./datasets/anime/images/{}.jpg'.format(idx[__])))
+                #     train_batch = np.array(_d)
+                #     train_batch = (train_batch - 127.5) / 127.5
+                # else:
+                idx = np.random.choice(X_train.shape[0], batch_size, replace=False)
+                train_batch = X_train[idx]
                 gen_loss, dis_loss, d_loss_r, d_loss_f = train_step(train_batch, batch_size,
                                                                     reg=self.d_reg, ada=augment)  # train with batch
 
